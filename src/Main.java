@@ -15,11 +15,16 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Java Bitmap Message.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 public class Main {
 	public static void main(String args[]) {
@@ -40,7 +45,7 @@ public class Main {
 			ImageViewer iv2 = new ImageViewer(loader.getImageBuffer());
 			iv2.drawImage();
 			loader.saveToFile("forYou.bmp");
-			*/
+			 */
 
 			System.out.print("Draw Image (i) encode (e) or decode (d)? : ");
 
@@ -84,8 +89,9 @@ public class Main {
 		temp = reader.readLine();
 		BinaryModifier bm = new BinaryModifier(Integer.parseInt(temp));
 
-		System.out.print("Enter message to Encode: ");
-		loader.setPixelData(bm.encodeMessage(loader.getPixelData(), BinaryModifier.embedHeader(reader.readLine().getBytes())));
+		System.out.print("Enter file to Encode: ");
+		File encodeFile = new File(reader.readLine());
+		loader.setPixelData(bm.encodeMessage(loader.getPixelData(), BinaryModifier.embedHeader(IOUtils.toByteArray(new FileInputStream(encodeFile)))));
 		loader.recalcBuffer();
 
 		System.out.print("Enter File to Save: ");
@@ -107,7 +113,9 @@ public class Main {
 		temp = reader.readLine();
 		BinaryModifier bm = new BinaryModifier(Integer.parseInt(temp));
 
-		System.out.println(new String(BinaryModifier.getData((bm.decodeMessage(loader.getPixelData())))));
+		System.out.print("Enter file to save decoded data to: ");
+		FileUtils.writeByteArrayToFile(new File(reader.readLine()), BinaryModifier.getData(bm.decodeMessage(loader.getPixelData())));
+
 		reader.close();
 		return;
 	}
