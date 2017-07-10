@@ -315,14 +315,15 @@ public class BinaryModifier {
 	 */
 	public static byte[] embedHeader(byte[] data) {
 		int len = data.length;
-		byte[] b = new byte[len + 3];
+		byte[] b = new byte[len + 4];
 
-		b[0] = (byte) (len >>> 16);
-		b[1] = (byte) (len >>> 8);
-		b[2] = (byte) (len >>> 0);
+		b[0] = (byte) (len >>> 24);
+		b[1] = (byte) (len >>> 16);
+		b[2] = (byte) (len >>> 8);
+		b[3] = (byte) (len >>> 0);
 
 		for (int x = 0; x < len; x++) {
-			b[x + 3] = data[x];
+			b[x + 4] = data[x];
 		}
 
 		return b;
@@ -337,7 +338,7 @@ public class BinaryModifier {
 	 * @return Length of message in data with header
 	 */
 	public static int getHeader(byte[] data) {
-		return 0 << 24 | (data[0] & 0xFF) << 16 | (data[1] & 0xFF) << 8 | (data[2] & 0xFF);
+		return (data[0] & 0xFF) << 24 | (data[1] & 0xFF) << 16 | (data[2] & 0xFF) << 8 | (data[3] & 0xFF);
 	}
 
 	/**
@@ -351,7 +352,7 @@ public class BinaryModifier {
 	public static byte[] getData(byte[] data) {
 		byte[] b = new byte[getHeader(data)];
 		for (int x = 0; x < b.length; x++) {
-			b[x] = data[x + 3];
+			b[x] = data[x + 4];
 		}
 
 		return b;
